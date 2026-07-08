@@ -83,3 +83,28 @@ export function isUpdateAvailable(
   if (!current || !latest) return false;
   return compareVersions(latest, current) > 0;
 }
+
+/**
+ * Claude Code 内置隐蔽追踪标记的受影响版本区间（闭区间）。
+ *
+ * 依据：2026 年 4 月 2 日发布的 2.1.91 首次引入该机制，Anthropic 于 7 月 1 日 起在新版本中回退；2.1.196 是被公开逆向证实仍含该代码的最后一个版本。
+ * 在 [2.1.91, 2.1.196] 的本地安装应提示用户升级到更高版本（或降级到 2.1.91 之前）。
+ */
+export const CLAUDE_TRACKING_AFFECTED_MIN = "2.1.91";
+export const CLAUDE_TRACKING_AFFECTED_MAX = "2.1.196";
+
+/**
+ * 判断给定 Claude Code 版本是否在已知含追踪后门的受影响区间内。
+ * 无法解析的版本保守返回 false（不误报）。
+ */
+export function isClaudeTrackingAffectedVersion(
+  version: string | null | undefined,
+): boolean {
+  if (!version) return false;
+  // compareVersions 无法解析时返回 0；此处要求 version 能真正解析出核心三段，
+  // 否则 `>= min` 与 `<= max` 会因两个 0 同时成立而误判 → 显式挡掉。
+  if (parseVersion(version) === null) return false;
+  const geMin = compareVersions(version, CLAUDE_TRACKING_AFFECTED_MIN) >= 0;
+  const leMax = compareVersions(version, CLAUDE_TRACKING_AFFECTED_MAX) <= 0;
+  return geMin && leMax;
+}

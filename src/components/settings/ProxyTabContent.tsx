@@ -125,6 +125,10 @@ export function ProxyTabContent({
               onEnableLocalProxyChange={(checked) =>
                 onAutoSave({ enableLocalProxy: checked })
               }
+              claudeAntiTracking={settings?.claudeAntiTracking ?? false}
+              onClaudeAntiTrackingChange={(checked) =>
+                onAutoSave({ claudeAntiTracking: checked })
+              }
               onToggleProxy={handleToggleProxy}
               isProxyPending={isProxyPending}
             />

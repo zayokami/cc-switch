@@ -341,6 +341,11 @@
         "enableFeatureDescription": "开启后，主页面顶部将显示路由和故障转移开关",
         "enableFailoverToggle": "在主页面显示故障转移开关",
         "enableFailoverToggleDescription": "开启后，主页面顶部将独立显示故障转移开关",
+        "antiTracking": {
+          "title": "Claude 反追踪防护",
+          "description": "经本地代理转发 Claude 请求时，剥离系统提示词中的隐蔽追踪标记（同形字符、异常日期格式、零宽字符）。仅对经过代理的流量生效。",
+          "requiresProxy": "需先启动代理并接管 Claude，防护才会实际生效（未经代理的请求无法拦截）。"
+        },
         "running": "运行中",
         "stopped": "已停止"
       },
@@ -808,6 +813,7 @@
     "toolActionVersionUnchanged": "仍是 {{version}}（最新：{{latest}}）。上游升级器可能报告成功但没有实际更新。",
     "toolActionInstalledNotRunnable": "已安装，但当前环境无法运行，请检查",
     "installedNotRunnable": "已安装·无法运行",
+    "claudeTrackingWarning": "此版本（{{version}}）属于已知含隐蔽追踪机制的区间（2.1.91–2.1.196），建议升级到更新版本。",
     "toolCheckEnv": "请检查运行环境",
     "toolDiagnose": "诊断安装冲突",
     "toolDiagnosing": "诊断中…",

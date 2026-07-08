@@ -341,6 +341,11 @@
         "enableFeatureDescription": "有効にすると、メインページ上部にルーティングとフェイルオーバーの切り替えが表示されます",
         "enableFailoverToggle": "メインページにフェイルオーバー切り替えを表示",
         "enableFailoverToggleDescription": "有効にすると、メインページ上部にフェイルオーバー切り替えが独立して表示されます",
+        "antiTracking": {
+          "title": "Claude トラッキング対策",
+          "description": "ローカルプロキシ経由で Claude リクエストを転送する際、システムプロンプトに埋め込まれた秘匿トラッキング標識（同形異字・改変された日付形式・ゼロ幅文字）を除去します。プロキシを経由するトラフィックにのみ有効です。",
+          "requiresProxy": "この保護を実際に適用するには、プロキシを起動して Claude を引き継ぐ必要があります（プロキシを経由しないリクエストは傍受できません）。"
+        },
         "running": "実行中",
         "stopped": "停止中"
       },
@@ -808,6 +813,7 @@
     "toolActionVersionUnchanged": "現在も {{version}}（最新: {{latest}}）です。アップデーターが成功を報告しても実際には更新されていない可能性があります。",
     "toolActionInstalledNotRunnable": "インストールされましたが、現在の環境では実行できません。確認してください",
     "installedNotRunnable": "インストール済み・実行不可",
+    "claudeTrackingWarning": "このバージョン（{{version}}）は、秘匿トラッキング機構を含むことが判明している範囲（2.1.91〜2.1.196）に該当します。より新しいバージョンへの更新を推奨します。",
     "toolCheckEnv": "実行環境を確認",
     "toolDiagnose": "インストールを診断",
     "toolDiagnosing": "診断中…",

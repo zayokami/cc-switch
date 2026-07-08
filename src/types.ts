@@ -355,6 +355,8 @@ export interface Settings {
   silentStartup?: boolean;
   // 是否启用主页面本地代理功能（默认关闭）
   enableLocalProxy?: boolean;
+  // 是否让本地代理剥离 Claude Code 隐蔽追踪标记（默认关闭，仅作用于经代理的请求）
+  claudeAntiTracking?: boolean;
   // User has confirmed the local proxy first-run notice
   proxyConfirmed?: boolean;
   // User has confirmed the usage query first-run notice

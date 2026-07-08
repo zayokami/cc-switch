@@ -360,6 +360,12 @@ pub struct AppSettings {
     /// 是否在主页面启用本地代理功能（默认关闭）
     #[serde(default)]
     pub enable_local_proxy: bool,
+    /// Opt-in: when set, the local proxy strips Claude Code's covert
+    /// steganographic tracking markers (homoglyph apostrophe / flipped date
+    /// separator / zero-width chars) from outbound Anthropic-format requests
+    /// before forwarding. Only affects traffic that flows through the proxy.
+    #[serde(default)]
+    pub claude_anti_tracking: bool,
     /// User has confirmed the local proxy first-run notice
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub proxy_confirmed: Option<bool>,
@@ -499,6 +505,7 @@ impl Default for AppSettings {
             launch_on_startup: false,
             silent_startup: false,
             enable_local_proxy: false,
+            claude_anti_tracking: false,
             proxy_confirmed: None,
             usage_confirmed: None,
             stream_check_confirmed: None,
@@ -918,6 +925,18 @@ pub fn unify_codex_session_history() -> bool {
             e.into_inner()
         })
         .unify_codex_session_history
+}
+
+/// Whether the proxy should strip Claude Code covert tracking markers from
+/// outbound Anthropic-format requests.
+pub fn claude_anti_tracking_enabled() -> bool {
+    settings_store()
+        .read()
+        .unwrap_or_else(|e| {
+            log::warn!("设置锁已毒化，使用恢复值: {e}");
+            e.into_inner()
+        })
+        .claude_anti_tracking
 }
 
 // ===== 当前供应商管理函数 =====

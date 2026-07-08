@@ -15,6 +15,12 @@ pub async fn start_proxy_server(
     state.proxy_service.start().await
 }
 
+/// 本进程内代理已剥离的 Claude 追踪标记总数（供前端展示防护成效）。
+#[tauri::command]
+pub async fn get_anti_tracking_stripped_count() -> Result<u64, String> {
+    Ok(crate::proxy::anti_tracking::markers_stripped_total())
+}
+
 /// 停止代理服务器（仅停止服务，不恢复/清理 Live 接管状态）
 #[tauri::command]
 pub async fn stop_proxy_server(state: tauri::State<'_, AppState>) -> Result<(), String> {

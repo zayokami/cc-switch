@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { compareVersions, isUpdateAvailable } from "./version";
+import {
+  compareVersions,
+  isUpdateAvailable,
+  isClaudeTrackingAffectedVersion,
+  CLAUDE_TRACKING_AFFECTED_MIN,
+  CLAUDE_TRACKING_AFFECTED_MAX,
+} from "./version";
 
 describe("compareVersions", () => {
   it("按主版本三段比较大小", () => {
@@ -45,5 +51,32 @@ describe("isUpdateAvailable", () => {
     expect(isUpdateAvailable(undefined, "2.1.156")).toBe(false);
     expect(isUpdateAvailable("2.1.156", null)).toBe(false);
     expect(isUpdateAvailable("", "")).toBe(false);
+  });
+});
+
+describe("isClaudeTrackingAffectedVersion", () => {
+  it("受影响区间的边界与内部版本判为 true", () => {
+    expect(isClaudeTrackingAffectedVersion(CLAUDE_TRACKING_AFFECTED_MIN)).toBe(
+      true,
+    );
+    expect(isClaudeTrackingAffectedVersion(CLAUDE_TRACKING_AFFECTED_MAX)).toBe(
+      true,
+    );
+    expect(isClaudeTrackingAffectedVersion("2.1.100")).toBe(true);
+    expect(isClaudeTrackingAffectedVersion("2.1.196")).toBe(true);
+  });
+
+  it("区间外(更低/更高)版本判为 false", () => {
+    expect(isClaudeTrackingAffectedVersion("2.1.90")).toBe(false);
+    expect(isClaudeTrackingAffectedVersion("2.1.197")).toBe(false);
+    expect(isClaudeTrackingAffectedVersion("2.2.0")).toBe(false);
+    expect(isClaudeTrackingAffectedVersion("2.0.99")).toBe(false);
+  });
+
+  it("无法解析或缺失版本时保守返回 false", () => {
+    expect(isClaudeTrackingAffectedVersion(null)).toBe(false);
+    expect(isClaudeTrackingAffectedVersion(undefined)).toBe(false);
+    expect(isClaudeTrackingAffectedVersion("")).toBe(false);
+    expect(isClaudeTrackingAffectedVersion("unknown")).toBe(false);
   });
 });

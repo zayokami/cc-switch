@@ -341,6 +341,11 @@
         "enableFeatureDescription": "When enabled, the routing and failover toggles will appear at the top of the main page",
         "enableFailoverToggle": "Show Failover Toggle on Main Page",
         "enableFailoverToggleDescription": "When enabled, the failover toggle will appear independently at the top of the main page",
+        "antiTracking": {
+          "title": "Claude Anti-Tracking",
+          "description": "Strip covert tracking markers (homoglyph characters, altered date format, zero-width characters) from the system prompt when forwarding Claude requests through the local proxy. Only affects traffic that goes through the proxy.",
+          "requiresProxy": "Start the proxy and take over Claude for this protection to actually apply — requests that don't go through the proxy can't be intercepted."
+        },
         "running": "Running",
         "stopped": "Stopped"
       },
@@ -808,6 +813,7 @@
     "toolActionVersionUnchanged": "Still on {{version}} (latest: {{latest}}). The updater may have reported success without applying the update.",
     "toolActionInstalledNotRunnable": "Installed, but it can't run in the current environment — please check",
     "installedNotRunnable": "Installed · can't run",
+    "claudeTrackingWarning": "This version ({{version}}) falls in the range known to contain a covert tracking mechanism (2.1.91–2.1.196). Upgrading to a newer version is recommended.",
     "toolCheckEnv": "Check environment",
     "toolDiagnose": "Diagnose installs",
     "toolDiagnosing": "Diagnosing…",

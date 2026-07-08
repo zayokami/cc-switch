@@ -341,6 +341,11 @@
         "enableFeatureDescription": "開啟後，主頁面頂部將顯示路由和故障轉移開關",
         "enableFailoverToggle": "在主頁面顯示故障轉移開關",
         "enableFailoverToggleDescription": "開啟後，主頁面頂部將獨立顯示故障轉移開關",
+        "antiTracking": {
+          "title": "Claude 反追蹤防護",
+          "description": "經本地代理轉發 Claude 請求時，剝離系統提示詞中的隱蔽追蹤標記（同形字元、異常日期格式、零寬字元）。僅對經過代理的流量生效。",
+          "requiresProxy": "需先啟動代理並接管 Claude，防護才會實際生效（未經代理的請求無法攔截）。"
+        },
         "running": "執行中",
         "stopped": "已停止"
       },

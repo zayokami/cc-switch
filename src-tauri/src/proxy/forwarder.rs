@@ -445,6 +445,12 @@ impl RequestForwarder {
                     body.clone()
                 };
 
+            // Anti-tracking: strip Claude Code covert steganographic markers
+            // (homoglyph apostrophe / flipped date separator / zero-width chars)
+            // from the outbound system prompt when the user opted in. Gated
+            // internally on app_type == Claude + the settings toggle.
+            super::anti_tracking::apply_if_enabled(app_type, &mut provider_body);
+
             attempted_providers += 1;
 
             // 更新状态中的当前 Provider 信息（per-attempt 维度的标识）

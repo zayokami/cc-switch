@@ -9,6 +9,7 @@ import {
   Loader2,
   Zap,
   Power,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -36,6 +37,8 @@ interface ProxyPanelProps {
   onEnableLocalProxyChange: (checked: boolean) => void;
   onToggleProxy: (checked: boolean) => Promise<void>;
   isProxyPending: boolean;
+  claudeAntiTracking: boolean;
+  onClaudeAntiTrackingChange: (checked: boolean) => void;
 }
 
 export function ProxyPanel({
@@ -43,6 +46,8 @@ export function ProxyPanel({
   onEnableLocalProxyChange,
   onToggleProxy,
   isProxyPending,
+  claudeAntiTracking,
+  onClaudeAntiTrackingChange,
 }: ProxyPanelProps) {
   const { t } = useTranslation();
   const { status, isRunning } = useProxyStatus();
@@ -221,7 +226,7 @@ export function ProxyPanel({
   return (
     <>
       <section className="space-y-4">
-        {/* [1] Enable proxy button on main page — always visible */}
+        {/* Enable proxy button on main page — always visible */}
         <ToggleRow
           icon={<Zap className="h-4 w-4 text-green-500" />}
           title={t("settings.advanced.proxy.enableFeature")}
@@ -229,6 +234,30 @@ export function ProxyPanel({
           checked={enableLocalProxy}
           onCheckedChange={onEnableLocalProxyChange}
         />
+
+        {/* Claude anti-tracking sanitizer */}
+        <ToggleRow
+          icon={<ShieldCheck className="h-4 w-4 text-blue-500" />}
+          title={t("settings.advanced.proxy.antiTracking.title", {
+            defaultValue: "Claude 反追踪防护",
+          })}
+          description={t("settings.advanced.proxy.antiTracking.description", {
+            defaultValue:
+              "经本地代理转发 Claude 请求时，剥离系统提示词中的隐蔽追踪标记（同形字符、异常日期格式、零宽字符）。仅对经过代理的流量生效。",
+          })}
+          checked={claudeAntiTracking}
+          onCheckedChange={onClaudeAntiTrackingChange}
+        />
+        {claudeAntiTracking && !isRunning && (
+          <div className="rounded-lg bg-blue-500/10 border border-blue-500/20 px-4 py-2.5">
+            <p className="text-xs text-blue-600 dark:text-blue-400">
+              {t("settings.advanced.proxy.antiTracking.requiresProxy", {
+                defaultValue:
+                  "需先启动代理并接管 Claude，防护才会实际生效（未经代理的请求无法拦截）。",
+              })}
+            </p>
+          </div>
+        )}
 
         {/* [2] Proxy service toggle — always visible */}
         <div className="flex items-center justify-between rounded-xl border border-border bg-card/50 p-4 transition-colors hover:bg-muted/50">

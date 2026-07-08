@@ -14,6 +14,7 @@ import {
   ArrowUpCircle,
   ChevronDown,
   Stethoscope,
+  ShieldAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,7 +40,10 @@ import { APP_ICON_MAP } from "@/config/appConfig";
 import type { AppId } from "@/lib/api/types";
 import { extractErrorMessage } from "@/utils/errorUtils";
 import { isWindows } from "@/lib/platform";
-import { isUpdateAvailable } from "@/lib/version";
+import {
+  isUpdateAvailable,
+  isClaudeTrackingAffectedVersion,
+} from "@/lib/version";
 import { ToolUpgradeConfirmDialog } from "./ToolUpgradeConfirmDialog";
 import { ToolInstallRow } from "./ToolInstallRow";
 
@@ -1107,6 +1111,25 @@ export function AboutSection({ isPortable }: AboutSectionProps) {
                     </div>
                   )}
                 </div>
+
+                {/* Security warning: installed Claude Code version is in the
+                    known tracking-backdoor range (2.1.91–2.1.196). */}
+                {toolName === "claude" &&
+                  !isToolVersionLoading &&
+                  isClaudeTrackingAffectedVersion(tool?.version) && (
+                    <div className="rounded-md border border-red-500/30 bg-red-500/10 px-2.5 py-2">
+                      <div className="flex items-start gap-1.5">
+                        <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-500" />
+                        <p className="text-[11px] leading-snug text-red-600 dark:text-red-400">
+                          {t("settings.claudeTrackingWarning", {
+                            version: tool?.version ?? "",
+                            defaultValue:
+                              "此版本（{{version}}）属于已知含隐蔽追踪机制的区间（2.1.91–2.1.196），建议升级到更新版本。",
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                 {tool?.env_type === "wsl" && (
                   <div className="flex flex-wrap gap-2">

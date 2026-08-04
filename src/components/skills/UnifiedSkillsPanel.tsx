@@ -819,7 +819,7 @@ const InstalledSkillListItem: React.FC<InstalledSkillListItemProps> = ({
         className="flex-shrink-0 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
         style={hasUpdate ? { opacity: 1 } : undefined}
       >
-        {hasUpdate && onUpdate && (
+        {skill.repoOwner && skill.repoName && onUpdate && (
           <Button
             type="button"
             variant="ghost"

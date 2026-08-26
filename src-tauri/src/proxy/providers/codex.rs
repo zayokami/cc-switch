@@ -1105,7 +1105,6 @@ context_window = 500000
     }
 
     #[test]
-    #[test]
     fn explicit_codex_official_cards_use_chatgpt_backend() {
         let mut provider = create_provider(json!({
             "auth": {

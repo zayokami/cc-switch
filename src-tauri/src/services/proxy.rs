@@ -155,7 +155,7 @@ impl CodexAuthFileTransaction {
                     )
                 })?;
             }
-            Err(error) if error.kind() == std::io::ErrorKind::Unsupported => {
+            Err(error) if Self::hard_link_unsupported(&error) => {
                 // No hard links on this filesystem; the copy fallback in
                 // install_file_if_vacant covers it, so allow the transaction.
                 let _ = std::fs::remove_file(&probe);
@@ -360,7 +360,7 @@ impl CodexAuthFileTransaction {
         if Self::hard_link_primary_available() {
             match std::fs::hard_link(source, destination) {
                 Ok(()) => return Ok(()),
-                Err(error) if error.kind() == std::io::ErrorKind::Unsupported => {}
+                Err(error) if Self::hard_link_unsupported(&error) => {}
                 Err(error) => return Err(error),
             }
         }
@@ -460,6 +460,17 @@ impl CodexAuthFileTransaction {
                 );
             }
         }
+    }
+
+    /// Whether this hard-link failure means "this filesystem cannot create
+    /// hard links at all" and the create_new + copy fallback should take over.
+    ///
+    /// `ErrorKind::Unsupported` alone is not sufficient: WSL UNC paths reject
+    /// link creation with Win32 `ERROR_NOT_SUPPORTED` (os error 50), which
+    /// this std's Windows error mapping leaves uncategorized, so the raw OS
+    /// code is matched as well.
+    fn hard_link_unsupported(error: &std::io::Error) -> bool {
+        error.kind() == std::io::ErrorKind::Unsupported || error.raw_os_error() == Some(50)
     }
 
     fn unique_sibling_path(
@@ -9677,6 +9688,27 @@ base_url = "https://third.example/v1"
             restored.get("OPENAI_API_KEY").and_then(Value::as_str),
             Some(PROXY_TOKEN_PLACEHOLDER)
         );
+    }
+
+    /// The classifier must recognize both a synthesized `Unsupported` and the
+    /// raw Win32 `ERROR_NOT_SUPPORTED` (os error 50) that WSL UNC actually
+    /// returns for hard-link creation; unrelated failures stay hard errors.
+    #[test]
+    fn hard_link_unsupported_covers_kind_and_raw_win32_code() {
+        let synthesized = std::io::Error::from(std::io::ErrorKind::Unsupported);
+        assert!(CodexAuthFileTransaction::hard_link_unsupported(
+            &synthesized
+        ));
+
+        let wsl_unc = std::io::Error::from_raw_os_error(50);
+        assert!(CodexAuthFileTransaction::hard_link_unsupported(&wsl_unc));
+
+        assert!(!CodexAuthFileTransaction::hard_link_unsupported(
+            &std::io::Error::from(std::io::ErrorKind::PermissionDenied)
+        ));
+        assert!(!CodexAuthFileTransaction::hard_link_unsupported(
+            &std::io::Error::other("generic failure")
+        ));
     }
 
     /// Clear-or-arm helper keeping the one-shot injection readable in tests.
